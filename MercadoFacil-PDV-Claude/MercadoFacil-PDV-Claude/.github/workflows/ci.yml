@@ -1,0 +1,151 @@
+name: CI
+
+# Roda em push/PR na migration/supabase, na feat/meu-plano-gestao (branch do
+# corte de produção, PR #34 contra main) e, a partir de agora, também em
+# main — main deixa de ser só a base44-app antiga assim que o corte for
+# mergeado, então precisa do mesmo CI a partir daqui.
+on:
+  push:
+    branches: [migration/supabase, feat/meu-plano-gestao, main]
+  pull_request:
+    branches: [migration/supabase, feat/meu-plano-gestao, main]
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        # Cobertura do typecheck ainda é parcial — 215 erros pré-existentes
+        # (rastreados no Security Gate, Prioridade 15; já reduzido de ~1700
+        # via fixes de causa raiz — ui/ forwardRef, Dexie, useState({})).
+        # Não bloqueante ainda para não deixar o CI permanentemente vermelho
+        # por débito conhecido. Tornar bloqueante assim que a Prioridade 15 zerar.
+        run: npm run typecheck
+        continue-on-error: true
+
+      - name: Build
+        run: npm run build
+
+      - name: Dependency / security scan
+        # Bloqueante: nenhuma vulnerabilidade "high"/"critical" aceita hoje
+        # (xlsx, que era a única high, foi trocado por exceljs — ver commit
+        # P4-R2). As 4 moderadas restantes (uuid, react-router-dom) foram
+        # avaliadas e não são exploráveis no uso real deste app — ver relatório
+        # de segurança. Uma high/critical NOVA agora falha o job de verdade.
+        # --omit=dev: só dependências que chegam à aplicação publicada. A high
+        # atual (node-forge, sem correção publicada) é só devDependency usada
+        # em smokes e não entra no bundle.
+        #
+        # EXCEÇÃO DOCUMENTADA — GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, negação de
+        # serviço por padrões de glob aninhados), que o npm audit propaga como 5
+        # "high": braces, micromatch, chokidar, fast-glob e tailwindcss.
+        #  - Não existe versão corrigida de braces (3.0.3 é a última publicada).
+        #  - A cadeia vem do tailwindcss 3, usado só no build (PostCSS). Ele entra
+        #    na árvore de produção porque tailwindcss-animate o declara como
+        #    peerDependency, mas não vai para o bundle.
+        #  - Os padrões de glob são fixos (tailwind.config.js, "content") e nunca
+        #    vêm de usuário; o pior caso seria falhar o próprio build.
+        #  - Sair disso exige migrar para o Tailwind 4, mudança independente.
+        # npm audit não tem allowlist nativa, então o gate lê o JSON: qualquer
+        # high/critical com advisory que não esteja em EXCECOES reprova o job.
+        # Remover o ID de EXCECOES quando houver correção ou migração.
+        run: |
+          npm audit --omit=dev --json > audit.json || true
+          node - <<'EOF'
+          const EXCECOES = ["GHSA-vfj7-8cjw-p6xm"];
+          const a = JSON.parse(require("fs").readFileSync("audit.json", "utf8"));
+          if (a.error || !a.vulnerabilities) {
+            console.log("::error::npm audit não devolveu um relatório válido");
+            process.exit(1);
+          }
+          let falhou = false;
+          for (const [nome, v] of Object.entries(a.vulnerabilities)) {
+            if (v.severity !== "high" && v.severity !== "critical") continue;
+            // via com objeto = advisory do próprio pacote; via com texto = herdado de outro pacote (que é avaliado à parte).
+            const novas = v.via.filter((x) => typeof x !== "string" && !EXCECOES.some((g) => (x.url || "").includes(g)));
+            if (novas.length) {
+              falhou = true;
+              console.log("::error::" + nome + " (" + v.severity + "): " + novas.map((x) => x.url || x.title).join(", "));
+            } else {
+              console.log("exceção documentada: " + nome + " (" + v.severity + ")");
+            }
+          }
+          if (falhou) process.exit(1);
+          console.log("Nenhuma high/critical fora das exceções documentadas.");
+          EOF
+
+  smoke-tests:
+    runs-on: ubuntu-latest
+    # Precisa de credenciais reais do Supabase (service role) para rodar contra
+    # o projeto — nunca commitadas no repo. Só executa se os secrets abaixo
+    # estiverem configurados em Settings → Secrets and variables → Actions;
+    # do contrário este job é pulado (não falha o pipeline).
+    if: ${{ github.repository_owner != '' }}
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check smoke-test secrets are configured
+        id: secrets_check
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$SUPABASE_URL" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "SUPABASE_SERVICE_ROLE_KEY / VITE_SUPABASE_URL não configurados nos Secrets do repositório — pulando smoke tests."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Write .env.local from secrets
+        # Todos os ~30 scripts de smoke leem credencial só de um .env.local em
+        # disco (loadEnvLocal(), nunca process.env) — padrão pensado pra dev
+        # local. O runner não tem esse arquivo; sem ele todo script cai no
+        # mesmo ENOENT. Escrever aqui evita reescrever loadEnvLocal() em cada
+        # um dos ~30 arquivos. .env.local nunca é commitado (.gitignore).
+        if: steps.secrets_check.outputs.skip == 'false'
+        run: |
+          cat > .env.local <<EOF
+          VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+          VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+          SUPABASE_URL=$SUPABASE_URL
+          SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
+          EOF
+
+      - name: Build
+        # verify-electron.mjs (parte da suíte) precisa de dist/ — este job não
+        # compartilha o build de build-and-check (jobs separados, sem artifact).
+        if: steps.secrets_check.outputs.skip == 'false'
+        run: npm run build
+
+      - name: Install Xvfb (for verify-electron.mjs)
+        # Electron não abre janela num runner Linux sem display gráfico.
+        if: steps.secrets_check.outputs.skip == 'false'
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Run smoke suite
+        if: steps.secrets_check.outputs.skip == 'false'
+        run: xvfb-run -a node scripts/smoke-all.mjs

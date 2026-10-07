@@ -1,0 +1,147 @@
+{
+  "name": "Sale",
+  "type": "object",
+  "properties": {
+    "number": {
+      "type": "number",
+      "title": "N\u00famero"
+    },
+    "items": {
+      "type": "array",
+      "title": "Itens",
+      "items": {
+        "type": "object"
+      }
+    },
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal",
+      "default": 0
+    },
+    "discount": {
+      "type": "number",
+      "title": "Desconto",
+      "default": 0
+    },
+    "total": {
+      "type": "number",
+      "title": "Total"
+    },
+    "payment_method": {
+      "type": "string",
+      "title": "Forma de Pagamento",
+      "enum": [
+        "dinheiro",
+        "pix",
+        "credito",
+        "debito",
+        "crediario"
+      ]
+    },
+    "amount_received": {
+      "type": "number",
+      "title": "Valor Recebido",
+      "default": 0
+    },
+    "change": {
+      "type": "number",
+      "title": "Troco",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "aguardando_pagamento",
+        "concluida",
+        "cancelada"
+      ],
+      "default": "concluida"
+    },
+    "pix_payment_id": {
+      "type": "string",
+      "title": "ID pagamento PIX (MP)"
+    },
+    "pix_external_reference": {
+      "type": "string",
+      "title": "Refer\u00eancia externa PIX"
+    },
+    "customer_id": {
+      "type": "string",
+      "title": "Cliente ID"
+    },
+    "customer_name": {
+      "type": "string",
+      "title": "Cliente"
+    },
+    "cash_register_id": {
+      "type": "string",
+      "title": "Caixa ID"
+    },
+    "client_id": {
+      "type": "string",
+      "title": "ID Local (Idempot\u00eancia)"
+    },
+    "terminal_id": {
+      "type": "string",
+      "title": "Terminal ID"
+    },
+    "terminal_name": {
+      "type": "string",
+      "title": "Terminal"
+    },
+    "company_id": {
+      "type": "string",
+      "title": "Empresa ID"
+    }
+  },
+  "required": [
+    "total",
+    "payment_method"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

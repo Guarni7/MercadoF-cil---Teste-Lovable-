@@ -1,0 +1,31 @@
+# Deploy das Edge Functions Mercado Pago
+
+# Quem configura o quê
+#
+# - Venda no PDV cobra na conta do LOJISTA. O Access Token dele fica em
+#   company_payment_secrets, cadastrado pela própria tela do app:
+#   Configurações → Pagamento → Mercado Pago → colar Access Token → Salvar → Testar.
+#   Nada disso exige secret no Supabase.
+#
+# - Assinatura e add-ons cobram na conta da PLATAFORMA. Só esses dois usam os
+#   secrets abaixo.
+
+# 1) Login CLI (uma vez)
+npx supabase login
+
+# 2) Link ao projeto
+npx supabase link --project-ref rrawbkhdinsvzbdsknon
+
+# 3) Secrets da plataforma (somente assinatura/add-on)
+npx supabase secrets set MERCADO_PAGO_ACCESS_TOKEN=APP_USR-ou-TEST-...
+npx supabase secrets set MERCADO_PAGO_WEBHOOK_SECRET=sua_secret_webhook_mp
+
+# 4) Deploy
+npx supabase functions deploy save-payment-settings
+npx supabase functions deploy generate-pix-payment
+npx supabase functions deploy check-pix-payment
+npx supabase functions deploy mercadopago-webhook --no-verify-jwt
+
+# Webhook URL (mesma para todas as lojas; cada uma cadastra a sua chave secreta
+# no app, e o webhook identifica a loja pela cobrança registrada):
+# https://rrawbkhdinsvzbdsknon.supabase.co/functions/v1/mercadopago-webhook

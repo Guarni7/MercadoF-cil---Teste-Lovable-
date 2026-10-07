@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#f8fafc" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>MercadoFácil PDV</title>
+    <meta name="description" content="Sistema de gestão de ponto de venda completo para minimercados — controle de estoque, vendas, clientes e relatórios." />
+    <link rel="canonical" href="https://mercado-facil-pdv.vercel.app/landing" />
+
+    <!-- Open Graph / Twitter Card — preview ao compartilhar o link (WhatsApp, redes) -->
+    <meta property="og:title" content="MercadoFácil PDV" />
+    <meta property="og:description" content="Sistema de gestão de ponto de venda completo para minimercados — controle de estoque, vendas, clientes e relatórios." />
+    <meta property="og:image" content="https://mercado-facil-pdv.vercel.app/brand/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mercado-facil-pdv.vercel.app/landing" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MercadoFácil PDV" />
+    <meta name="twitter:description" content="Sistema de gestão de ponto de venda completo para minimercados — controle de estoque, vendas, clientes e relatórios." />
+    <meta name="twitter:image" content="https://mercado-facil-pdv.vercel.app/brand/og-image.png" />
+
+    <!-- Fundo estável antes do CSS (evita flash amarelo/laranja no carregamento) -->
+    <style>
+      html, body, #root {
+        margin: 0;
+        min-height: 100%;
+        background-color: #f8fafc;
+        color: #1e293b;
+      }
+    </style>
+
+    <!-- Meta Pixel Base Code — arquivo externo (public/pixel-loader.js) para
+         script-src não precisar de 'unsafe-inline' na CSP (vercel.json).
+         Noscript omitido: ID real via Integrações. -->
+    <script src="/pixel-loader.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- Registro do Service Worker — arquivo externo (public/sw-register.js),
+         mesmo motivo do Meta Pixel acima. -->
+    <script src="/sw-register.js"></script>
+  </body>
+</html>

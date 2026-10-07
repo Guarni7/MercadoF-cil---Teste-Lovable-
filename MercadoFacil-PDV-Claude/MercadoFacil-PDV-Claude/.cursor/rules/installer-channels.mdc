@@ -1,0 +1,10 @@
+# Instalador MercadoFácil (desktop)
+
+- O app Electron roda a **SPA empacotada** (`mercadofacil://app`), fala com o **Supabase** e funciona sem internet. Nada de `.base44.app`.
+- Distribuição: repo público `Guarni7/MercadoFacil-PDV-releases` (código-fonte continua no repo privado). Nada de `.exe` no Git nem no deploy da Vercel.
+- Publicar versão: `node scripts/release-desktop.mjs` → `node scripts/publish-github-release.mjs --dir=release-artifacts`. Subir `package.json` version + `src/lib/desktopDownload.js`.
+- Auto-update via `electron-updater` (provider `github`). Instala ao fechar; banco local preservado.
+- Verificar: `node scripts/verify-electron.mjs` e `node scripts/verify-electron-update.mjs`.
+- `MF_URL` e `MF_UPDATE_URL` são apenas overrides de teste.
+- Android = PWA por enquanto. APK/Play Store sob demanda.
+- Ícones: `scripts/make-app-icon.cjs`. Detalhes em `INSTALLER_README.md`.

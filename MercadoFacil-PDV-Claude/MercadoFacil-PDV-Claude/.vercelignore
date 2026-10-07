@@ -1,0 +1,8 @@
+# Saídas de build do desktop e relatórios — não vão para o deploy.
+# O instalador (~99 MB) é distribuído pelo GitHub Releases, não pela Vercel.
+release/**
+release-build/**
+release-artifacts/**
+graphify-out/**
+migration-dump/**
+migration-dump-synthetic/**

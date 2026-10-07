@@ -1,0 +1,14 @@
+---
+description: Notas da versão 3.79.2 e módulos comerciais planejados (ainda não implementados)
+alwaysApply: true
+---
+
+# Release notes pendentes (UI only)
+
+Quando o usuário pedir para **listar as atualizações** / changelog da próxima versão, leia e liste de `src/lib/releaseNotes.js` (`PENDING_RELEASE.notes`).
+
+- Versão atual do produto no PDV: **1.0.0** (`src/lib/appVersion.js` → `APP_VERSION`) — sobe conforme atualizações
+- Próxima planejada (lista UI): **3.79.2** — `implemented: false` (só popups; número da lista antiga, ajustar quando for lançar)
+- Fluxo de UI: Atualização disponível → (simular Atualizar) → Sistema Atualizado → Módulos comerciais
+- NÃO implementar as features da lista até o usuário pedir explicitamente
+- Módulos comerciais: `COMMERCIAL_MODULES` no mesmo arquivo

@@ -1,0 +1,125 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Nome"
+    },
+    "document": {
+      "type": "string",
+      "title": "CPF/CNPJ"
+    },
+    "phone": {
+      "type": "string",
+      "title": "WhatsApp"
+    },
+    "email": {
+      "type": "string",
+      "title": "E-mail"
+    },
+    "birthday": {
+      "type": "string",
+      "title": "Nascimento",
+      "format": "date"
+    },
+    "cep": {
+      "type": "string",
+      "title": "CEP"
+    },
+    "address": {
+      "type": "string",
+      "title": "Logradouro"
+    },
+    "address_number": {
+      "type": "string",
+      "title": "N\u00famero"
+    },
+    "complement": {
+      "type": "string",
+      "title": "Complemento"
+    },
+    "neighborhood": {
+      "type": "string",
+      "title": "Bairro"
+    },
+    "city": {
+      "type": "string",
+      "title": "Cidade"
+    },
+    "state": {
+      "type": "string",
+      "title": "UF"
+    },
+    "credit_limit": {
+      "type": "number",
+      "title": "Limite de Cr\u00e9dito",
+      "default": 0
+    },
+    "credit_balance": {
+      "type": "number",
+      "title": "Saldo Devedor",
+      "default": 0
+    },
+    "client_id": {
+      "type": "string",
+      "title": "ID Local (Idempot\u00eancia)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Observa\u00e7\u00f5es"
+    },
+    "company_id": {
+      "type": "string",
+      "title": "Empresa ID"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

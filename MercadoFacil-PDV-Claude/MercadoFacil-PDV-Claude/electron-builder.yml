@@ -1,0 +1,102 @@
+appId: com.mercadofacil.pdv
+productName: MercadoFacilPDV
+copyright: Copyright © 2026 MercadoFácil
+
+directories:
+  output: release
+  buildResources: electron/build
+
+# O instalador é servido como asset estático; manter abaixo do limite de 100 MB.
+compression: maximum
+electronLanguages:
+  - pt-BR
+  - en-US
+
+# O app roda a cópia empacotada da SPA — é isso que mantém o PDV funcionando
+# quando o mercado fica sem internet. Os dados vão para o Supabase.
+files:
+  - electron/main.cjs
+  - electron/preload.cjs
+  - electron/userDataPath.cjs
+  - electron/printing.cjs
+  - electron/closeFlow.cjs
+  # Ícone da janela (BrowserWindow.icon, main.cjs): sem isto o arquivo não existe dentro do app.asar
+  - electron/build/icon.png
+  - dist/**/*
+  # O renderer é o bundle já compilado pelo Vite; nenhuma dependência de
+  # runtime precisa ir junto (sem isso o pacote passa de 150 MB).
+  # O app não precisa carregar o próprio instalador para dentro do pacote.
+  - "!dist/downloads/**/*"
+  - "!node_modules/**/*"
+  # Exceção: o auto-update roda no processo main e precisa ir empacotado.
+  - "node_modules/electron-updater/**/*"
+  # Balança serial (Toledo Prix 8217) — fala com a porta COM no processo
+  # main. @serialport/bindings-cpp usa N-API (ABI estável desde a v10), os
+  # binários pré-compilados em prebuilds/ funcionam direto no Electron, sem
+  # rebuild nenhum.
+  - "node_modules/serialport/**/*"
+  - "node_modules/@serialport/**/*"
+  # node-gyp-build é o carregador do .node pré-compilado (require em runtime de
+  # @serialport/bindings-cpp): sem ele o main process cai ao abrir. node-addon-api
+  # só serve para compilar, mas vai junto para manter o fechamento de dependências.
+  # A lista inteira é conferida por scripts/verify-package-deps.mjs (também roda no release).
+  - "node_modules/node-gyp-build/**/*"
+  - "node_modules/node-addon-api/**/*"
+  - "node_modules/builder-util-runtime/**/*"
+  - "node_modules/argparse/**/*"
+  - "node_modules/debug/**/*"
+  - "node_modules/fs-extra/**/*"
+  - "node_modules/graceful-fs/**/*"
+  - "node_modules/js-yaml/**/*"
+  - "node_modules/jsonfile/**/*"
+  - "node_modules/lazy-val/**/*"
+  - "node_modules/lodash.escaperegexp/**/*"
+  - "node_modules/lodash.isequal/**/*"
+  - "node_modules/ms/**/*"
+  - "node_modules/sax/**/*"
+  - "node_modules/semver/**/*"
+  - "node_modules/tiny-typed-emitter/**/*"
+  - "node_modules/universalify/**/*"
+  - "!src/**/*"
+  - "!scripts/**/*"
+  - "!supabase/**/*"
+  - "!legacy/**/*"
+  - "!release*/**/*"
+
+extraResources: []
+
+# Sem rebuild nativo: o serialport usa binário N-API pré-compilado (prebuilds/), que funciona em
+# qualquer Electron. Recompilar exigiria toolchain de C++ no build sem trazer nada.
+npmRebuild: false
+
+# Feed de atualização: releases do repositório público de instaladores
+# (o código-fonte fica no repositório privado). Publicar com
+# `node scripts/publish-github-release.mjs`.
+publish:
+  provider: github
+  owner: Guarni7
+  repo: MercadoFacil-PDV-releases
+  releaseType: release
+
+win:
+  target:
+    - nsis
+    - portable
+  icon: electron/build/icon.ico
+  artifactName: MercadoFacilPDV-Setup-${version}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: MercadoFácil PDV
+  installerIcon: electron/build/icon.ico
+  uninstallerIcon: electron/build/icon.ico
+  installerHeaderIcon: electron/build/icon.ico
+  # Preserva o banco local (IndexedDB) entre atualizações e desinstalações.
+  deleteAppDataOnUninstall: false
+
+portable:
+  artifactName: MercadoFacilPDV-Portable-${version}.${ext}

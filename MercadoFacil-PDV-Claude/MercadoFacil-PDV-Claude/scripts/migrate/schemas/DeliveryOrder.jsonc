@@ -1,0 +1,156 @@
+{
+  "name": "DeliveryOrder",
+  "type": "object",
+  "properties": {
+    "number": {
+      "type": "number",
+      "title": "N\u00famero"
+    },
+    "customer_id": {
+      "type": "string",
+      "title": "Cliente ID"
+    },
+    "customer_name": {
+      "type": "string",
+      "title": "Cliente"
+    },
+    "customer_phone": {
+      "type": "string",
+      "title": "WhatsApp"
+    },
+    "items": {
+      "type": "array",
+      "title": "Itens",
+      "items": {
+        "type": "object"
+      }
+    },
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal",
+      "default": 0
+    },
+    "delivery_fee": {
+      "type": "number",
+      "title": "Taxa de Entrega",
+      "default": 0
+    },
+    "discount": {
+      "type": "number",
+      "title": "Desconto",
+      "default": 0
+    },
+    "total": {
+      "type": "number",
+      "title": "Total",
+      "default": 0
+    },
+    "payment_method": {
+      "type": "string",
+      "title": "Forma de Pagamento",
+      "enum": [
+        "dinheiro",
+        "pix",
+        "credito",
+        "debito",
+        "cartao_entrega"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pendente",
+        "preparando",
+        "saiu_entrega",
+        "entregue",
+        "cancelado"
+      ],
+      "default": "pendente"
+    },
+    "delivery_person": {
+      "type": "string",
+      "title": "Entregador"
+    },
+    "cep": {
+      "type": "string",
+      "title": "CEP"
+    },
+    "address": {
+      "type": "string",
+      "title": "Logradouro"
+    },
+    "address_number": {
+      "type": "string",
+      "title": "N\u00famero"
+    },
+    "complement": {
+      "type": "string",
+      "title": "Complemento"
+    },
+    "neighborhood": {
+      "type": "string",
+      "title": "Bairro"
+    },
+    "city": {
+      "type": "string",
+      "title": "Cidade"
+    },
+    "state": {
+      "type": "string",
+      "title": "UF"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Observa\u00e7\u00f5es"
+    },
+    "scheduled_for": {
+      "type": "string",
+      "title": "Agendar para",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "customer_name",
+    "total",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

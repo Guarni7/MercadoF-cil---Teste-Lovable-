@@ -1,0 +1,56 @@
+# Minimal Supabase config for local/CLI deploys
+#
+# verify_jwt fica explícito em toda função: o padrão do deploy varia conforme a
+# flag usada na primeira subida, e uma função sensível que nasceu com
+# verify_jwt = false continua aberta no gateway em toda republicação.
+#
+# Só os webhooks ficam sem JWT — quem chama é o Mercado Pago / o ConnectTEF, que
+# não têm sessão. O do Mercado Pago se autentica pela assinatura HMAC do próprio
+# payload; o do ConnectTEF, pelo Bearer CONNECTTEF_WEBHOOK_TOKEN.
+[functions.mercadopago-webhook]
+verify_jwt = false
+
+[functions.connecttef-webhook]
+verify_jwt = false
+
+[functions.generate-pix-payment]
+verify_jwt = true
+
+[functions.check-pix-payment]
+verify_jwt = true
+
+[functions.save-payment-settings]
+verify_jwt = true
+
+[functions.register-company]
+verify_jwt = true
+
+[functions.activate-company]
+verify_jwt = true
+
+[functions.list-companies]
+verify_jwt = true
+
+[functions.invite-user]
+verify_jwt = true
+
+[functions.assign-role]
+verify_jwt = true
+
+[functions.save-fiscal-settings]
+verify_jwt = true
+
+[functions.fiscal-diagnostics]
+verify_jwt = true
+
+[functions.fiscal-emit]
+verify_jwt = true
+
+[functions.fiscal-document]
+verify_jwt = true
+
+[functions.connecttef-pair-smartpos]
+verify_jwt = true
+
+[functions.connecttef-request-payment]
+verify_jwt = true

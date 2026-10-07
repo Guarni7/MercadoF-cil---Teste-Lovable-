@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 14% 98%;
+    --foreground: 200 10% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 200 10% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 10% 20%;
+    --primary: 164 75% 34%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 14% 95%;
+    --secondary-foreground: 200 10% 20%;
+    --muted: 210 14% 95%;
+    --muted-foreground: 200 5% 45%;
+    --accent: 164 75% 34%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 14% 90%;
+    --input: 210 14% 90%;
+    --ring: 164 75% 34%;
+    --chart-1: 164 75% 34%;
+    --chart-2: 173 58% 45%;
+    --chart-3: 197 37% 40%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --font-heading: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sidebar-background: 180 50% 11%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 169 83% 45%;
+    --sidebar-primary-foreground: 180 50% 10%;
+    --sidebar-accent: 169 83% 45%;
+    --sidebar-accent-foreground: 180 50% 10%;
+    --sidebar-border: 175 35% 18%;
+    --sidebar-ring: 169 83% 45%;
+  }
+
+  .dark {
+    --background: 180 20% 8%;
+    --foreground: 0 0% 95%;
+    --card: 180 20% 12%;
+    --card-foreground: 0 0% 95%;
+    --popover: 180 20% 12%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 164 75% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 180 15% 18%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 180 15% 18%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 180 15% 18%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 180 15% 20%;
+    --input: 180 15% 20%;
+    --ring: 164 75% 40%;
+    --chart-1: 164 75% 40%;
+    --chart-2: 173 58% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 180 50% 8%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 169 83% 45%;
+    --sidebar-primary-foreground: 180 50% 10%;
+    --sidebar-accent: 180 30% 18%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 175 35% 15%;
+    --sidebar-ring: 169 83% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+}
+
+/* Sign-in page animations */
+@keyframes fadeSlideIn {
+  from { opacity: 0; filter: blur(8px); transform: translateY(20px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@keyframes slideRightIn {
+  from { opacity: 0; filter: blur(8px); transform: translateX(40px); }
+  to { opacity: 1; filter: blur(0); transform: translateX(0); }
+}
+
+@keyframes testimonialIn {
+  from { opacity: 0; filter: blur(8px); transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+}
+
+.animate-element {
+  opacity: 0;
+  animation: fadeSlideIn 0.7s ease forwards;
+}
+
+.animate-slide-right {
+  opacity: 0;
+  animation: slideRightIn 0.8s ease forwards;
+}
+
+.animate-testimonial {
+  opacity: 0;
+  animation: testimonialIn 0.6s ease forwards;
+}
+
+.animate-delay-100 { animation-delay: 0.1s; }
+.animate-delay-200 { animation-delay: 0.2s; }
+.animate-delay-300 { animation-delay: 0.3s; }
+.animate-delay-400 { animation-delay: 0.4s; }
+.animate-delay-500 { animation-delay: 0.5s; }
+.animate-delay-600 { animation-delay: 0.6s; }
+.animate-delay-700 { animation-delay: 0.7s; }
+.animate-delay-800 { animation-delay: 0.8s; }
+.animate-delay-900 { animation-delay: 0.9s; }
+.animate-delay-1000 { animation-delay: 1s; }
+.animate-delay-1200 { animation-delay: 1.2s; }
+.animate-delay-1400 { animation-delay: 1.4s; }
+
+.custom-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid hsl(var(--border));
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.custom-checkbox:checked {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+.custom-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-element,
+  .animate-slide-right,
+  .animate-testimonial {
+    opacity: 1;
+    animation: none;
+  }
+}

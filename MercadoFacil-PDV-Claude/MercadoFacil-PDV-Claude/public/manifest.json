@@ -1,0 +1,27 @@
+{
+  "name": "MercadoFácil PDV",
+  "short_name": "MercadoFácil",
+  "description": "Sistema de PDV offline-first para minimercados — continue vendendo mesmo sem internet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#f8fafc",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/brand/mf-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/mf-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity", "shopping"],
+  "lang": "pt-BR",
+  "dir": "ltr"
+}

@@ -1,0 +1,117 @@
+{
+  "name": "CashRegister",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "aberto",
+        "fechado"
+      ],
+      "default": "aberto"
+    },
+    "opening_balance": {
+      "type": "number",
+      "title": "Saldo de Abertura",
+      "default": 0
+    },
+    "closing_balance": {
+      "type": "number",
+      "title": "Saldo de Fechamento"
+    },
+    "opened_at": {
+      "type": "string",
+      "title": "Aberto em",
+      "format": "date-time"
+    },
+    "closed_at": {
+      "type": "string",
+      "title": "Fechado em",
+      "format": "date-time"
+    },
+    "opened_by_name": {
+      "type": "string",
+      "title": "Aberto por"
+    },
+    "sales_total": {
+      "type": "number",
+      "title": "Total de Vendas",
+      "default": 0
+    },
+    "sales_count": {
+      "type": "number",
+      "title": "Qtd. Vendas",
+      "default": 0
+    },
+    "notes": {
+      "type": "string",
+      "title": "Observa\u00e7\u00f5es"
+    },
+    "terminal_id": {
+      "type": "string",
+      "title": "Terminal ID"
+    },
+    "terminal_name": {
+      "type": "string",
+      "title": "Terminal"
+    },
+    "client_id": {
+      "type": "string",
+      "title": "ID Local (Idempot\u00eancia)"
+    },
+    "company_id": {
+      "type": "string",
+      "title": "Empresa ID"
+    }
+  },
+  "required": [
+    "status",
+    "opening_balance"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

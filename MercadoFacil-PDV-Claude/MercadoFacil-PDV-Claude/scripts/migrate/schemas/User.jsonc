@@ -1,0 +1,48 @@
+{
+  "properties": {
+    "role": {
+      "type": "string",
+      "description": "The role of the user in the app",
+      "enum": [
+        "admin",
+        "user"
+      ]
+    },
+    "company_id": {
+      "type": "string",
+      "title": "Empresa ID"
+    },
+    "company_role": {
+      "type": "string",
+      "title": "Papel na empresa"
+    },
+    "platform_admin": {
+      "type": "boolean",
+      "title": "Admin da plataforma",
+      "default": false
+    },
+    "plan": {
+      "type": "string",
+      "title": "Plano"
+    },
+    "plan_status": {
+      "type": "string",
+      "title": "Status do plano"
+    },
+    "plan_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Plano expira em"
+    },
+    "trial_started_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "In\u00edcio do trial"
+    }
+  },
+  "required": [
+    "role"
+  ],
+  "name": "User",
+  "type": "object"
+}

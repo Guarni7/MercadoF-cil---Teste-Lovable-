@@ -1,0 +1,142 @@
+{
+  "name": "Nfce",
+  "type": "object",
+  "properties": {
+    "number": {
+      "type": "number",
+      "title": "N\u00famero"
+    },
+    "series": {
+      "type": "number",
+      "title": "S\u00e9rie"
+    },
+    "issue_date": {
+      "type": "string",
+      "title": "Data de Emiss\u00e3o",
+      "format": "date-time"
+    },
+    "sale_id": {
+      "type": "string",
+      "title": "Venda ID"
+    },
+    "sale_number": {
+      "type": "number",
+      "title": "N\u00ba Venda"
+    },
+    "customer_id": {
+      "type": "string",
+      "title": "Cliente ID"
+    },
+    "customer_name": {
+      "type": "string",
+      "title": "Cliente"
+    },
+    "customer_document": {
+      "type": "string",
+      "title": "CPF/CNPJ Cliente"
+    },
+    "items": {
+      "type": "array",
+      "title": "Itens",
+      "items": {
+        "type": "object"
+      }
+    },
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal",
+      "default": 0
+    },
+    "discount": {
+      "type": "number",
+      "title": "Desconto",
+      "default": 0
+    },
+    "total": {
+      "type": "number",
+      "title": "Total"
+    },
+    "payment_method": {
+      "type": "string",
+      "title": "Forma de Pagamento"
+    },
+    "cfop": {
+      "type": "string",
+      "title": "CFOP"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "emitida",
+        "cancelada",
+        "rejeitada"
+      ],
+      "default": "emitida"
+    },
+    "access_key": {
+      "type": "string",
+      "title": "Chave de Acesso"
+    },
+    "protocol": {
+      "type": "string",
+      "title": "Protocolo SEFAZ"
+    },
+    "xml": {
+      "type": "string",
+      "title": "XML"
+    },
+    "environment": {
+      "type": "string",
+      "title": "Ambiente",
+      "enum": [
+        "homologacao",
+        "producao"
+      ],
+      "default": "homologacao"
+    }
+  },
+  "required": [
+    "number",
+    "series",
+    "total"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
